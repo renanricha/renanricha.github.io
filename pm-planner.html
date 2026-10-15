@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preventive maintenance planner</title><link rel="stylesheet" href="style.css">
+<style>.r{display:flex;border:1px solid var(--bd);background:var(--card);border-radius:8px;overflow:hidden;margin-top:8px}.r i{width:8px;background:var(--c)}.r div{padding:10px 12px;flex:1}.r small{color:var(--mut)}.r b{color:var(--c)}</style></head><body>
+<nav class="t"><div class="w"><b>Preventive maintenance planner</b><a class="back" href="index.html">Back to portfolio</a></div></nav>
+<main class="w" style="padding-top:22px;padding-bottom:40px">
+<div class="panel grid g2">
+<div><label for="n">Task</label><input id="n" placeholder="e.g. Change spindle oil"></div>
+<div><label for="m">Machine</label><input id="m" placeholder="e.g. CNC Lathe 02"></div>
+<div><label for="i">Repeat every (days)</label><input id="i" type="number" min="1" value="30"></div>
+<div><label for="d">Last done</label><input id="d" type="date"></div>
+</div>
+<p><button class="btn" id="add">Add task</button> <span class="mut" id="msg"></span></p>
+<div id="list"></div>
+<p class="mut" style="font-size:14px">Sample data. Tasks reset when you reload the page.</p>
+</main>
+<script>
+const $=i=>document.getElementById(i),day=864e5,t0=new Date().setHours(0,0,0,0),iso=o=>new Date(t0-o*day).toISOString().slice(0,10);
+let T=[["Change spindle oil","CNC Lathe 02",30,iso(35)],["Check coolant level","Milling Center 01",7,iso(3)],["Inspect belts","Compressor A",90,iso(60)]];
+const esc=s=>{const e=document.createElement("div");e.textContent=s;return e.innerHTML};
+function draw(){const R=T.map((x,k)=>{const due=Math.round((new Date(x[3]+"T00:00:00")-t0)/day)+x[2];return{x,k,due}}).sort((a,b)=>a.due-b.due);
+$("list").innerHTML=R.map(({x,k,due})=>{const c=due<0?"var(--bad)":due<=7?"var(--warn)":"var(--ok)",s=due<0?`Overdue by ${-due} days`:due===0?"Due today":`Due in ${due} days`;
+return `<div class="r" style="--c:${c}"><i></i><div><b>${s}</b><br>${esc(x[0])}<br><small>${esc(x[1])}, every ${x[2]} days</small></div><div style="flex:none"><button class="btn" data-k="${k}">Mark done</button></div></div>`}).join("")||'<p class="mut">No tasks yet. Add the first one above.</p>'}
+$("add").onclick=()=>{const n=$("n").value.trim();if(!n){$("msg").textContent="Enter a task name.";return}
+T.push([n,$("m").value.trim()||"No machine",+$("i").value||30,$("d").value||iso(0)]);$("n").value=$("m").value="";$("msg").textContent="Task added.";draw()};
+$("list").onclick=e=>{const b=e.target.closest("[data-k]");if(!b)return;T[b.dataset.k][3]=iso(0);draw()};
+draw();
+</script></body></html>

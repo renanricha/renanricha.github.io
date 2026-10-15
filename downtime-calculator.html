@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Downtime cost calculator</title><link rel="stylesheet" href="style.css"></head><body>
+<nav class="t"><div class="w"><b>Downtime cost calculator</b><a class="back" href="index.html">Back to portfolio</a></div></nav>
+<main class="w" style="padding-top:22px;padding-bottom:40px">
+<p class="mut">Enter your numbers. Results update as you type.</p>
+<div class="panel grid g2">
+<div><label for="h">Hours stopped per month</label><input id="h" type="number" min="0" value="24"></div>
+<div><label for="c">Cost per stopped hour</label><input id="c" type="number" min="0" value="800"></div>
+<div><label for="r">Reduction with preventive maintenance (%)</label><input id="r" type="number" min="0" max="100" value="30"></div>
+<div><label for="k">Monthly cost of the program</label><input id="k" type="number" min="0" value="2000"></div>
+</div>
+<div class="grid g2" style="margin-top:12px">
+<div class="panel"><span class="mut">Lost per year</span><div class="big" id="a"></div></div>
+<div class="panel"><span class="mut">Saved per year</span><div class="big" id="b"></div></div>
+<div class="panel"><span class="mut">Net result per year</span><div class="big" id="n"></div></div>
+<div class="panel"><span class="mut">Verdict</span><div id="v" style="font-weight:700;margin-top:6px"></div></div>
+</div>
+<p class="mut" style="font-size:14px">The estimate uses only the figures you enter. Real results depend on your plant.</p>
+</main>
+<script>
+const $=i=>document.getElementById(i),f=n=>n.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+function go(){const h=+$("h").value||0,c=+$("c").value||0,r=Math.min(100,+$("r").value||0)/100,k=+$("k").value||0;
+const loss=h*c*12,sav=loss*r,net=sav-k*12;$("a").textContent=f(loss);$("b").textContent=f(sav);$("n").textContent=f(net);
+$("n").style.color=net>=0?"var(--ok)":"var(--bad)";
+$("v").textContent=net>0?"The program pays for itself.":net===0?"Break-even.":"At these numbers the program costs more than it saves."}
+document.querySelectorAll("input").forEach(e=>e.oninput=go);go();
+</script></body></html>
